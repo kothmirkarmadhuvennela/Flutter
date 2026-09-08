@@ -1,0 +1,102 @@
+import json
+import os
+
+class Contact:
+    def __init__(self, name, phone, email):
+        self.name = name
+        self.phone = phone
+        self.email = email
+
+    def __str__(self):
+        return f"Name: {self.name} | Phone: {self.phone} | Email: {self.email}"
+
+class ContactBook:
+    def __init__(self, filename="contacts.json"):
+        self.filename = filename
+        self.contacts = []
+        self.load_contacts()
+
+    def add_contact(self, name, phone, email):
+        new_contact = Contact(name, phone, email)
+        self.contacts.append(new_contact)
+        self.save_contacts()
+        print(f"Contact {name} added successfully.")
+
+    def view_contacts(self):
+        if not self.contacts:
+            print("No contacts found in the address book.")
+            return
+        print("\n--- Contact List ---")
+        for index, contact in enumerate(self.contacts, start=1):
+            print(f"{index}. {contact}")
+        print("-" * 22)
+
+    def search_contact(self, name):
+        results = [c for c in self.contacts if name.lower() in c.name.lower()]
+        if not results:
+            print(f"No contacts found matching '{name}'.")
+            return
+        print(f"\n--- Search Results for '{name}' ---")
+        for contact in results:
+            print(contact)
+        print("-" * 30)
+
+    def delete_contact(self, name):
+        initial_count = len(self.contacts)
+        self.contacts = [c for c in self.contacts if c.name.lower() != name.lower()]
+        if len(self.contacts) < initial_count:
+            self.save_contacts()
+            print(f"Contact '{name}' deleted successfully.")
+        else:
+            print(f"Contact '{name}' not found.")
+
+    def save_contacts(self):
+        data = [{"name": c.name, "phone": c.phone, "email": c.email} for c in self.contacts]
+        try:
+            with open(self.filename, "w") as file:
+                json.dump(data, file, indent=4)
+        except IOError:
+            print("Error saving data to file.")
+
+    def load_contacts(self):
+        if os.path.exists(self.filename):
+            try:
+                with open(self.filename, "r") as file:
+                    data = json.load(file)
+                    self.contacts = [Contact(c["name"], c["phone"], c["email"]) for c in data]
+            except (IOError, json.JSONDecodeError):
+                print("Error loading data from file.")
+
+def main():
+    book = ContactBook()
+    while True:
+        print("\n=== Contact Book Menu ===")
+        print("1. Add Contact")
+        print("2. View Contacts")
+        print("3. Search Contact")
+        print("4. Delete Contact")
+        print("5. Exit")
+        
+        choice = input("Choose an option (1-5): ").strip()
+        
+        if choice == '1':
+            name = input("Enter name: ").strip()
+            phone = input("Enter phone: ").strip()
+            email = input("Enter email: ").strip()
+            book.add_contact(name, phone, email)
+        elif choice == '2':
+            book.view_contacts()
+        elif choice == '3':
+            name = input("Enter name to search: ").strip()
+            book.search_contact(name)
+        elif choice == '4':
+            name = input("Enter name to delete: ").strip()
+            book.delete_contact(name)
+        elif choice == '5':
+            print("Exiting Contact Book. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please enter a number between 1 and 5.")
+
+if __name__ == "__main__":
+    main()
