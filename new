@@ -1,0 +1,108 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Calculator extends JFrame implements ActionListener {
+
+    // Components
+    private JTextField display;
+    private JPanel panel;
+    private String[] buttons = {
+        "7", "8", "9", "/",
+        "4", "5", "6", "*",
+        "1", "2", "3", "-",
+        "C", "0", "=", "+"
+    };
+    private JButton[] buttonObjects = new JButton[16];
+
+    // Calculation variables
+    private double num1 = 0, num2 = 0, result = 0;
+    private char operator;
+
+    public Calculator() {
+        // Frame setup
+        setTitle("Calculator");
+        setSize(350, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Display Setup
+        display = new JTextField();
+        display.setEditable(false);
+        display.setFont(new Font("Arial", Font.BOLD, 24));
+        display.setHorizontalAlignment(JTextField.RIGHT);
+        display.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(display, BorderLayout.NORTH);
+
+        // Buttons Panel Setup
+        panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 4, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Create and add buttons
+        for (int i = 0; i < buttons.length; i++) {
+            buttonObjects[i] = new JButton(buttons[i]);
+            buttonObjects[i].setFont(new Font("Arial", Font.BOLD, 20));
+            buttonObjects[i].addActionListener(this);
+            panel.add(buttonObjects[i]);
+        }
+
+        add(panel, BorderLayout.CENTER);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+
+        // Clear button
+        if (command.equals("C")) {
+            display.setText("");
+            num1 = num2 = result = 0;
+        } 
+        // Equals button
+        else if (command.equals("=")) {
+            if (!display.getText().isEmpty()) {
+                num2 = Double.parseDouble(display.getText());
+                calculate();
+                display.setText(String.valueOf(result));
+            }
+        } 
+        // Operators
+        else if (command.equals("+") || command.equals("-") || command.equals("*") || command.equals("/")) {
+            if (!display.getText().isEmpty()) {
+                num1 = Double.parseDouble(display.getText());
+                operator = command.charAt(0);
+                display.setText("");
+            }
+        } 
+        // Numbers
+        else {
+            display.setText(display.getText() + command);
+        }
+    }
+
+    private void calculate() {
+        switch (operator) {
+            case '+': result = num1 + num2; break;
+            case '-': result = num1 - num2; break;
+            case '*': result = num1 * num2; break;
+            case '/': 
+                if (num2 != 0) {
+                    result = num1 / num2;
+                } else {
+                    display.setText("Error");
+                    return;
+                }
+                break;
+        }
+    }
+
+    public static void main(String[] args) {
+        // Run UI on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> {
+            new Calculator().setVisible(true);
+        });
+    }
+}
