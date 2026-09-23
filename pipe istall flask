@@ -1,0 +1,26 @@
+from flask import Flask
+
+# Initialize the Flask application
+app = Flask(__name__)
+
+# Define the route for the homepage
+@app.route('/')
+def home():
+    return """
+    <h1>Welcome to My Python Website!</h1>
+    <p>This page is served entirely using Python and Flask.</p>
+    <a href="/about">Go to the About Page</a>
+    """
+
+# Define a route for an "About" page
+@app.route('/about')
+def about():
+    return """
+    <h1>About This Site</h1>
+    <p>Flask makes it incredibly easy to build backend web applications quickly.</p>
+    <a href="/">Back to Home</a>
+    """
+
+# Run the local development server
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
