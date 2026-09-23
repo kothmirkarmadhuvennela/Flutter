@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jungle Dash — Temple Runner</title>
+  <style>
+    :root { --ink:#17221d; --cream:#fff8df; --gold:#f4bd42; --green:#164b39; --leaf:#4f9c5b; --coral:#ee705c; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family: ui-rounded, "Trebuchet MS", system-ui, sans-serif; color:var(--ink); background:linear-gradient(135deg,#f8df9b 0%,#f4b869 42%,#6ba66b 100%); overflow-x:hidden; }
+    body:before, body:after { content:""; position:fixed; z-index:-1; border-radius:50%; filter:blur(2px); opacity:.38; }
+    body:before { width:450px;height:450px;left:-170px;top:-140px;background:#ffe6a5; }
+    body:after { width:520px;height:520px;right:-220px;bottom:-250px;background:#2f7450; }
+    .wrap { width:min(1160px,94vw); margin:0 auto; padding:28px 0 42px; }
+    nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:42px; }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:900; letter-spacing:.08em; font-size:15px; }
+    .brand-mark { display:grid; place-items:center; width:37px;height:37px; border-radius:12px; background:var(--green); color:var(--gold); font-size:20px; box-shadow:4px 4px 0 #d79638; }
+    .nav-pill { border:1px solid rgba(23,34,29,.22); background:rgba(255,248,223,.5); border-radius:99px; padding:9px 15px; font-size:12px; font-weight:800; }
+    .hero { display:grid; grid-template-columns: .9fr 1.1fr; gap:45px; align-items:center; }
+    h1 { font-size:clamp(52px,8vw,93px); line-height:.88; margin:0 0 22px; letter-spacing:-.075em; max-width:570px; }
+    h1 span { color:var(--coral); display:block; text-shadow:3px 3px 0 rgba(255,248,223,.6); }
+    .lede { font-size:17px; line-height:1.6; max-width:420px; color:#385045; margin-bottom:27px; }
+    .actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    button { border:0; font:inherit; font-weight:900; cursor:pointer; transition:.18s transform,.18s box-shadow; }
+    button:hover { transform:translateY(-3px); }
+    .primary { background:var(--green); color:var(--cream); padding:15px 23px; border-radius:13px; box-shadow:5px 5px 0 #0d3025; }
+    .hint { font-size:12px; font-weight:800; color:#496253; }
+    .game-shell { background:rgba(255,248,223,.86); border:8px solid var(--green); border-radius:27px; box-shadow:13px 14px 0 rgba(21,65,49,.2); padding:10px; transform:rotate(1.2deg); }
+    .game-top { display:flex; justify-content:space-between; padding:5px 9px 10px; font-size:11px; font-weight:900; letter-spacing:.08em; color:#547060; }
+    .score { color:var(--coral); }
+    .canvas-wrap { position:relative; overflow:hidden; border-radius:16px; background:#429c80; }
+    canvas { display:block; width:100%; aspect-ratio: 1.53; }
+    .overlay { position:absolute; inset:0; display:grid; place-items:center; background:rgba(20,63,48,.32); color:white; text-align:center; pointer-events:none; }
+    .overlay.hidden { display:none; }
+    .overlay-card { background:rgba(255,248,223,.95); color:var(--ink); padding:20px 28px; border-radius:16px; box-shadow:6px 6px 0 rgba(22,75,57,.6); }
+    .overlay-card strong { display:block; font-size:26px; margin-bottom:5px; }
+    .overlay-card small { color:#547060; font-weight:800; }
+    .controls { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 5px 0; color:#52715f; font-size:11px; font-weight:900; }
+    .keys { display:flex; gap:5px; }
+    kbd { min-width:23px; padding:4px 6px; border:1px solid #a4b794; border-bottom-width:3px; border-radius:6px; background:#fffdf0; text-align:center; }
+    .features { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:68px; }
+    .feature { border-top:2px solid rgba(23,34,29,.22); padding-top:14px; }
+    .feature b { display:block; font-size:14px; margin-bottom:6px; }
+    .feature p { margin:0; color:#4f695a; font-size:13px; line-height:1.5; }
+    @media(max-width:800px) { .hero { grid-template-columns:1fr; gap:35px; } nav { margin-bottom:25px; } .game-shell { transform:none; } .features { margin-top:45px; } }
+    @media(max-width:480px) { .wrap { padding-top:18px; } .nav-pill { display:none; } .features { grid-template-columns:1fr; gap:18px; } .controls { font-size:9px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <nav><div class="brand"><div class="brand-mark">✦</div> JUNGLE DASH</div><div class="nav-pill">A MINI RUNNER GAME · v1.0</div></nav>
+    <section class="hero">
+      <div>
+        <h1>Run wild.<span>Stay golden.</span></h1>
+        <p class="lede">A tiny arcade sprint through the forgotten jungle. Dodge the ruins, grab the idols, and see how far your courage can carry you.</p>
+        <div class="actions"><button class="primary" id="startBtn">Start running&nbsp; →</button><span class="hint">Arrow keys or A / D to move · Space to jump</span></div>
+      </div>
+      <div class="game-shell">
+        <div class="game-top"><span>BEST RUN <span id="best">0000</span></span><span class="score">SCORE <span id="score">0000</span></span></div>
+        <div class="canvas-wrap">
+          <canvas id="game" width="720" height="470" aria-label="Jungle Dash game"></canvas>
+          <div class="overlay" id="overlay"><div class="overlay-card"><strong>Ready, runner?</strong><small>Press start to enter the ruins</small></div></div>
+        </div>
+        <div class="controls"><span>COLLECT COINS · AVOID ROCKS</span><span class="keys"><kbd>←</kbd><kbd>→</kbd><kbd>SPACE</kbd></span></div>
+      </div>
+    </section>
+    <section class="features"><div class="feature"><b>01 — Three lanes</b><p>Switch lanes quickly and keep your eyes on what is coming.</p></div><div class="feature"><b>02 — One more run</b><p>Every coin adds to your score. Every obstacle makes the next run better.</p></div><div class="feature"><b>03 — No download</b><p>A lightweight canvas game made to play right here in your browser.</p></div></section>
+  </main>
+  <script>
+    const canvas=document.getElementById('game'), ctx=canvas.getContext('2d'), W=720,H=470;
+    const scoreEl=document.getElementById('score'), bestEl=document.getElementById('best'), overlay=document.getElementById('overlay'), startBtn=document.getElementById('startBtn');
+    let running=false, lane=1, targetLane=1, score=0, speed=4.2, last=0, spawn=0, items=[];
+    let best=Number(localStorage.getItem('jungleDashBest')||0); bestEl.textContent=String(best).padStart(4,'0');
+    const lanes=[W*.35,W*.5,W*.65];
+    function reset(){ lane=targetLane=1; score=0; speed=4.2; spawn=0; items=[]; running=true; overlay.classList.add('hidden'); startBtn.textContent='Restart run  →'; last=performance.now(); requestAnimationFrame(loop); }
+    function end(){ running=false; if(score>best){best=score;localStorage.setItem('jungleDashBest',best);bestEl.textContent=String(best).padStart(4,'0');} overlay.innerHTML='<div class="overlay-card"><strong>Run ended!</strong><small>Score '+score+' · Press restart to try again</small></div>'; overlay.classList.remove('hidden'); }
+    function addItem(){ const type=Math.random()<.68?'coin':'rock'; items.push({type,lane:Math.floor(Math.random()*3),y:-30,spin:0}); }
+    function draw(){
+      const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#8ed49a');g.addColorStop(.43,'#4eaa78');g.addColorStop(1,'#216050');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+      // distant canopy and temple
+      ctx.fillStyle='#28674e'; for(let x=-20;x<W;x+=75){ctx.beginPath();ctx.arc(x,87+(x%3)*8,55,0,Math.PI*2);ctx.fill();}
+      ctx.fillStyle='#d2a75a';ctx.fillRect(W/2-54,75,108,92);ctx.fillStyle='#94703d';ctx.fillRect(W/2-65,70,130,13);ctx.fillRect(W/2-33,113,66,54);ctx.fillStyle='#f8d778';ctx.beginPath();ctx.arc(W/2,99,14,0,Math.PI*2);ctx.fill();
+      // perspective path
+      ctx.fillStyle='#c39b59';ctx.beginPath();ctx.moveTo(W*.39,150);ctx.lineTo(W*.61,150);ctx.lineTo(W*.86,H);ctx.lineTo(W*.14,H);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(255,232,158,.48)';ctx.lineWidth=3; for(let i=0;i<3;i++){let x=W*.39+i*W*.11;ctx.beginPath();ctx.moveTo(x,150);ctx.lineTo(W*(.22+i*.28),H);ctx.stroke();}
+      // vines
+      ctx.strokeStyle='#1d6045';ctx.lineWidth=7; for(let x=30;x<W;x+=120){ctx.beginPath();ctx.moveTo(x,0);ctx.quadraticCurveTo(x-25,85,x+20,150);ctx.stroke();}
+      items.forEach(o=>{let y=o.y, x=lanes[o.lane]; if(o.type==='coin'){ctx.save();ctx.translate(x,y);ctx.rotate(o.spin);ctx.fillStyle='#f7c54e';ctx.beginPath();ctx.arc(0,0,13,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff0a0';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#ab762b';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('✦',0,5);ctx.restore();}else{ctx.fillStyle='#765342';ctx.beginPath();ctx.moveTo(x-23,y+17);ctx.lineTo(x-17,y-15);ctx.lineTo(x+10,y-27);ctx.lineTo(x+25,y+15);ctx.closePath();ctx.fill();ctx.fillStyle='#a97555';ctx.beginPath();ctx.arc(x-5,y-7,5,0,Math.PI*2);ctx.fill();}});
+      // runner
+      const rx=lanes[Math.round(lane)], ry=H-82; ctx.save();ctx.translate(rx,ry); ctx.fillStyle='#ee705c';ctx.beginPath();ctx.arc(0,-26,14,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f6c94f';ctx.fillRect(-13,-10,26,33);ctx.strokeStyle='#173f31';ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-7,23);ctx.lineTo(-18,48);ctx.moveTo(7,23);ctx.lineTo(18,48);ctx.moveTo(-12,-2);ctx.lineTo(-29,14);ctx.moveTo(12,-2);ctx.lineTo(29,8);ctx.stroke();ctx.restore();
+    }
+    function loop(t){ if(!running)return; const dt=Math.min(32,t-last); last=t; spawn+=dt; scoreEl.textContent=String(score).padStart(4,'0'); speed+=dt*.00005; if(spawn>Math.max(470,900-speed*50)){addItem();spawn=0;} lane+=(targetLane-lane)*.18; items.forEach(o=>{o.y+=speed*dt/16; o.spin+=.08;}); items=items.filter(o=>{if(o.y>H-65&&o.y<H-15&&o.lane===Math.round(lane)){if(o.type==='coin'){score+=10;return false;} end();}return o.y<H+40;}); draw();requestAnimationFrame(loop); }
+    addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')targetLane=Math.max(0,targetLane-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')targetLane=Math.min(2,targetLane+1);if(e.code==='Space'&&!running)reset();});
+    startBtn.onclick=reset; draw();
+  </script>
+</body>
+</html>
