@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Web Vulnerability Demo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #eef3f8;
+            color: #263238;
+        }
+
+        header {
+            background: #123b63;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #123b63;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #315f8c;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #123b63;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1d568b;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success {
+            background: #dff5e5;
+            color: #176b2c;
+        }
+
+        .error {
+            background: #ffe2e2;
+            color: #a12626;
+        }
+
+        .warning {
+            background: #fff2cc;
+            color: #765b00;
+        }
+
+        .feature {
+            border-left: 5px solid #315f8c;
+            padding: 15px;
+            margin: 15px 0;
+            background: #f7f9fb;
+            border-radius: 5px;
+        }
+
+        .log-box {
+            background: #101820;
+            color: #b8f5c0;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 100px;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Web Vulnerability Demo</h1>
+    <p>Cyber Security Educational Project</p>
+</header>
+
+
+<div class="container">
+
+    <!-- AUTHENTICATION -->
+    <div class="card">
+
+        <h2>1. Authentication Concepts</h2>
+
+        <p>
+            This section demonstrates a simple login process and
+            authentication checks.
+        </p>
+
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Enter username">
+
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Enter password">
+
+        <button onclick="login()">Login</button>
+
+        <div id="loginResult" class="result"></div>
+
+    </div>
+
+
+    <!-- INPUT VALIDATION -->
+    <div class="card">
+
+        <h2>2. Input Validation</h2>
+
+        <p>
+            User input should be checked before it is processed.
+        </p>
+
+        <label>Enter a username</label>
+
+        <input
+            type="text"
+            id="inputUser"
+            placeholder="Example: student123"
+        >
+
+        <button onclick="validateInput()">Validate Input</button>
+
+        <div id="validationResult" class="result"></div>
+
+    </div>
+
+
+    <!-- SECURITY CHECKS -->
+    <div class="card">
+
+        <h2>3. Security Checks</h2>
+
+        <div class="feature">
+            <h3>Authentication Check</h3>
+            <p>
+                Checks whether the user has successfully logged in.
+            </p>
+            <span id="authStatus" class="status">
+                Not authenticated
+            </span>
+        </div>
+
+        <div class="feature">
+            <h3>Input Validation Check</h3>
+            <p>
+                Checks whether user input follows the expected format.
+            </p>
+            <span id="inputStatus" class="status">
+                Not checked
+            </span>
+        </div>
+
+        <button onclick="runSecurityChecks()">
+            Run Security Checks
+        </button>
+
+        <div id="securityResult" class="result"></div>
+
+    </div>
+
+
+    <!-- LOGGING -->
+    <div class="card">
+
+        <h2>4. Security Logging</h2>
+
+        <p>
+            Security events can be recorded to help identify
+            suspicious or incorrect activities.
+        </p>
+
+        <div id="logs" class="log-box">
+            No events recorded yet.
+        </div>
+
+    </div>
+
+
+    <!-- AWARENESS -->
+    <div class="card">
+
+        <h2>5. Security Awareness</h2>
+
+        <div class="feature">
+            <strong>Use strong passwords</strong>
+            <p>
+                Use long passwords and avoid easily guessed information.
+            </p>
+        </div>
+
+        <div class="feature">
+            <strong>Validate user input</strong>
+            <p>
+                Applications should not blindly trust data entered by users.
+            </p>
+        </div>
+
+        <div class="feature">
+            <strong>Protect authentication</strong>
+            <p>
+                Authentication systems should verify users before
+                providing access to protected resources.
+            </p>
+        </div>
+
+        <div class="feature">
+            <strong>Keep security logs</strong>
+            <p>
+                Logs can help developers identify unusual activity
+                and troubleshoot security problems.
+            </p>
+        </div>
+
+        <div class="feature">
+            <strong>Test only authorized systems</strong>
+            <p>
+                Security testing should be performed only on systems
+                where you have permission.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- DOCUMENTED WORKFLOW -->
+    <div class="card">
+
+        <h2>6. Project Workflow</h2>
+
+        <ol>
+            <li>User opens the web application.</li>
+            <li>User enters login information.</li>
+            <li>The application validates the input.</li>
+            <li>Authentication status is checked.</li>
+            <li>Security checks are performed.</li>
+            <li>Important events are added to the security log.</li>
+            <li>The application displays security awareness information.</li>
+        </ol>
+
+    </div>
+
+
+    <!-- TESTING -->
+    <div class="card">
+
+        <h2>7. Testing</h2>
+
+        <p>Test the application using the following cases:</p>
+
+        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+            <tr>
+                <th>Test Case</th>
+                <th>Expected Result</th>
+            </tr>
+
+            <tr>
+                <td>Correct username and password</td>
+                <td>Login successful</td>
+            </tr>
+
+            <tr>
+                <td>Empty username</td>
+                <td>Validation error</td>
+            </tr>
+
+            <tr>
+                <td>Empty password</td>
+                <td>Login error</td>
+            </tr>
+
+            <tr>
+                <td>Invalid username format</td>
+                <td>Input rejected</td>
+            </tr>
+
+            <tr>
+                <td>Run security checks</td>
+                <td>Security status displayed</td>
+            </tr>
+        </table>
+
+    </div>
+
+
+    <!-- PROJECT OUTCOME -->
+    <div class="card">
+
+        <h2>8. Expected Outcome</h2>
+
+        <p>
+            The project demonstrates basic web security concepts including
+            authentication, input validation, security checks, logging,
+            and security awareness through an interactive web application.
+        </p>
+
+    </div>
+
+</div>
+
+
+<footer>
+    Web Vulnerability Demo | Cyber Security Virtual Internship
+</footer>
+
+
+<script>
+
+    let authenticated = false;
+    let inputValidated = false;
+
+
+    // Add event to security log
+    function addLog(message) {
+
+        const logs = document.getElementById("logs");
+
+        const time = new Date().toLocaleTimeString();
+
+        if (logs.innerText === "No events recorded yet.") {
+            logs.innerText = "";
+        }
+
+        logs.innerText +=
+            "[" + time + "] " + message + "\n";
+    }
+
+
+    // Authentication
+    function login() {
+
+        const username =
+            document.getElementById("username").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const result =
+            document.getElementById("loginResult");
+
+
+        if (username === "" || password === "") {
+
+            result.style.display = "block";
+            result.className = "result error";
+            result.innerText =
+                "Username and password are required.";
+
+            authenticated = false;
+
+            addLog("Failed login attempt: empty credentials.");
+
+            return;
+        }
+
+
+        // Demo credentials only
+        if (username === "student" && password === "Student@123") {
+
+            authenticated = true;
+
+            result.style.display = "block";
+            result.className = "result success";
+            result.innerText =
+                "Login successful. Authentication completed.";
+
+            document.getElementById("authStatus").innerText =
+                "Authenticated";
+
+            addLog("Successful login for demo user.");
+
+        } else {
+
+            authenticated = false;
+
+            result.style.display = "block";
+            result.className = "result error";
+            result.innerText =
+                "Invalid username or password.";
+
+            document.getElementById("authStatus").innerText =
+                "Not authenticated";
+
+            addLog("Failed login attempt.");
+        }
+    }
+
+
+    // Input validation
+    function validateInput() {
+
+        const username =
+            document.getElementById("inputUser").value.trim();
+
+        const result =
+            document.getElementById("validationResult");
+
+
+        if (username === "") {
+
+            inputValidated = false;
+
+            result.style.display = "block";
+            result.className = "result error";
+            result.innerText =
+                "Input cannot be empty.";
+
+            document.getElementById("inputStatus").innerText =
+                "Invalid input";
+
+            addLog("Input validation failed.");
+
+            return;
+        }
+
+
+        // Allow letters, numbers and underscore
+        const validPattern = /^[A-Za-z0-9_]{3,20}$/;
+
+
+        if (!validPattern.test(username)) {
+
+            inputValidated = false;
+
+            result.style.display = "block";
+            result.className = "result warning";
+            result.innerText =
+                "Invalid input. Use 3-20 letters, numbers or underscore.";
+
+            document.getElementById("inputStatus").innerText =
+                "Invalid input";
+
+            addLog("Rejected invalid user input.");
+
+        } else {
+
+            inputValidated = true;
+
+            result.style.display = "block";
+            result.className = "result success";
+            result.innerText =
+                "Input is valid.";
+
+            document.getElementById("inputStatus").innerText =
+                "Input validated";
+
+            addLog("Input validation successful.");
+        }
+    }
+
+
+    // Security checks
+    function runSecurityChecks() {
+
+        const result =
+            document.getElementById("securityResult");
+
+
+        if (authenticated && inputValidated) {
+
+            result.style.display = "block";
+            result.className = "result success";
+
+            result.innerText =
+                "Security checks passed: authentication and input validation are successful.";
+
+            addLog("Security checks passed.");
+
+        } else {
+
+            result.style.display = "block";
+            result.className = "result warning";
+
+            result.innerText =
+                "Security checks incomplete. Complete authentication and input validation.";
+
+            addLog("Security checks reported incomplete.");
+        }
+    }
+
+</script>
+
+</body>
+</html>
