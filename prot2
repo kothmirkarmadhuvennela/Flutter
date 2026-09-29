@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Strength Analyzer</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef3f8;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .box {
+            background: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #ccc;
+        }
+
+        h1 {
+            color: #123b63;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #123b63;
+            color: white;
+            border: none;
+            border-radius: 7px;
+        }
+
+        .section {
+            text-align: left;
+            margin-top: 25px;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 8px;
+        }
+
+        #result {
+            font-weight: bold;
+            margin: 15px;
+        }
+
+        .log {
+            background: #222;
+            color: white;
+            padding: 10px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>Password Strength Analyzer</h1>
+
+    <p>
+        Check the strength of your password using basic
+        cyber security concepts.
+    </p>
+
+    <!-- PASSWORD ANALYZER -->
+    <input
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+    >
+
+    <br>
+
+    <button onclick="checkPassword()">
+        Check Password
+    </button>
+
+    <div id="result"></div>
+
+
+    <!-- AUTHENTICATION -->
+    <div class="section">
+        <h2>Authentication Concepts</h2>
+
+        <p>
+            Authentication verifies the identity of a user
+            before allowing access to a system.
+        </p>
+    </div>
+
+
+    <!-- INPUT VALIDATION -->
+    <div class="section">
+        <h2>Input Validation</h2>
+
+        <p>
+            The password is checked for length and different
+            types of characters.
+        </p>
+
+        <p id="validation">
+            Validation not performed yet.
+        </p>
+    </div>
+
+
+    <!-- SECURITY CHECKS -->
+    <div class="section">
+        <h2>Security Checks</h2>
+
+        <ul>
+            <li>Minimum 8 characters</li>
+            <li>Uppercase letter</li>
+            <li>Lowercase letter</li>
+            <li>Number</li>
+            <li>Special character</li>
+        </ul>
+
+        <p id="checks">
+            Security checks not performed yet.
+        </p>
+    </div>
+
+
+    <!-- LOGGING -->
+    <div class="section">
+        <h2>Logging</h2>
+
+        <div class="log" id="log">
+            No activity recorded.
+        </div>
+    </div>
+
+
+    <!-- AWARENESS -->
+    <div class="section">
+        <h2>Security Awareness</h2>
+
+        <ul>
+            <li>Use long and unique passwords.</li>
+            <li>Do not share your password.</li>
+            <li>Avoid using personal information.</li>
+            <li>Do not reuse the same password everywhere.</li>
+        </ul>
+    </div>
+
+
+    <!-- WORKFLOW -->
+    <div class="section">
+        <h2>Documented Workflow</h2>
+
+        <ol>
+            <li>Enter a password.</li>
+            <li>Validate the password.</li>
+            <li>Perform security checks.</li>
+            <li>Display password strength.</li>
+            <li>Record the activity in the log.</li>
+        </ol>
+    </div>
+
+
+    <!-- TESTING -->
+    <div class="section">
+        <h2>Testing</h2>
+
+        <p>Test with different passwords:</p>
+
+        <ul>
+            <li>12345 → Weak</li>
+            <li>password → Weak</li>
+            <li>Password123 → Medium</li>
+            <li>Password@123 → Strong</li>
+        </ul>
+    </div>
+
+
+    <!-- PROJECT SUBMISSION -->
+    <div class="section">
+        <h2>Project Submission</h2>
+
+        <p>
+            Password Strength Analyzer completed with
+            authentication concepts, input validation,
+            security checks, logging, awareness,
+            documented workflow and testing.
+        </p>
+    </div>
+
+</div>
+
+
+<script>
+
+function checkPassword() {
+
+    let password =
+        document.getElementById("password").value;
+
+    let result =
+        document.getElementById("result");
+
+    let validation =
+        document.getElementById("validation");
+
+    let checks =
+        document.getElementById("checks");
+
+    let log =
+        document.getElementById("log");
+
+
+    // INPUT VALIDATION
+
+    if (password.length == 0) {
+
+        result.innerHTML =
+            "Please enter a password.";
+
+        validation.innerHTML =
+            "Input validation failed.";
+
+        return;
+    }
+
+
+    // SECURITY CHECKS
+
+    let score = 0;
+
+    if (password.length >= 8)
+        score++;
+
+    if (/[A-Z]/.test(password))
+        score++;
+
+    if (/[a-z]/.test(password))
+        score++;
+
+    if (/[0-9]/.test(password))
+        score++;
+
+    if (/[^A-Za-z0-9]/.test(password))
+        score++;
+
+
+    // PASSWORD STRENGTH
+
+    if (score <= 2) {
+
+        result.innerHTML =
+            "Password Strength: WEAK";
+
+    }
+    else if (score <= 4) {
+
+        result.innerHTML =
+            "Password Strength: MEDIUM";
+
+    }
+    else {
+
+        result.innerHTML =
+            "Password Strength: STRONG";
+    }
+
+
+    // VALIDATION MESSAGE
+
+    validation.innerHTML =
+        "Input validation completed successfully.";
+
+
+    // SECURITY CHECK MESSAGE
+
+    checks.innerHTML =
+        "Security checks completed. " +
+        score + " out of 5 checks passed.";
+
+
+    // LOGGING
+
+    let time =
+        new Date().toLocaleTimeString();
+
+    log.innerHTML =
+        "Password strength checked at " + time;
+
+}
+
+</script>
+
+</body>
+</html>
