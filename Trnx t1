@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Analyzer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef3fa;
+            margin: 0;
+            padding: 20px;
+            color: #1c2740;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            font-size: 28px;
+        }
+
+        .description {
+            text-align: center;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin: 25px 0 10px;
+            font-weight: bold;
+        }
+
+        .password-box {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            padding: 12px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .strength-container {
+            margin-top: 25px;
+        }
+
+        .strength-bar {
+            height: 10px;
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        #strengthFill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        #strengthText {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .checks {
+            list-style: none;
+            padding: 0;
+            line-height: 2.2;
+        }
+
+        .checks li {
+            color: #64748b;
+        }
+
+        .checks li.pass {
+            color: #16a34a;
+        }
+
+        .suggestion {
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Password Strength Analyzer</h1>
+
+        <p class="description">
+            Check your password strength and learn how to create
+            a stronger password.
+        </p>
+
+        <label for="password">Enter Your Password</label>
+
+        <div class="password-box">
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                autocomplete="new-password"
+                oninput="analyzePassword()"
+            >
+
+            <button type="button" onclick="togglePassword()">
+                Show
+            </button>
+        </div>
+
+        <div class="strength-container">
+            <strong>Password Strength:</strong>
+
+            <div class="strength-bar">
+                <div id="strengthFill"></div>
+            </div>
+
+            <p id="strengthText">Enter a password to begin</p>
+        </div>
+
+        <h3>Security Checklist</h3>
+
+        <ul class="checks">
+            <li id="length">✗ At least 12 characters</li>
+            <li id="lowercase">✗ Contains lowercase letters</li>
+            <li id="uppercase">✗ Contains uppercase letters</li>
+            <li id="number">✗ Contains numbers</li>
+            <li id="special">✗ Contains special characters</li>
+        </ul>
+
+        <div class="suggestion">
+            <strong>Suggestion:</strong>
+            <p id="suggestionText">
+                Enter your password to receive suggestions.
+            </p>
+        </div>
+
+        <div class="footer">
+            Password Strength Analyzer | Student Project
+        </div>
+
+    </div>
+
+    <script>
+        function togglePassword() {
+            const password = document.getElementById("password");
+            const button = document.querySelector(".password-box button");
+
+            if (password.type === "password") {
+                password.type = "text";
+                button.textContent = "Hide";
+            } else {
+                password.type = "password";
+                button.textContent = "Show";
+            }
+        }
+
+        function analyzePassword() {
+            const password = document.getElementById("password").value;
+
+            const checks = {
+                length: password.length >= 12,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[^A-Za-z0-9]/.test(password)
+            };
+
+            let score = 0;
+
+            for (const key in checks) {
+                const item = document.getElementById(key);
+
+                if (checks[key]) {
+                    score++;
+                    item.classList.add("pass");
+                    item.textContent = "✓ " + {
+                        length: "At least 12 characters",
+                        lowercase: "Contains lowercase letters",
+                        uppercase: "Contains uppercase letters",
+                        number: "Contains numbers",
+                        special: "Contains special characters"
+                    }[key];
+                } else {
+                    item.classList.remove("pass");
+                    item.textContent = "✗ " + {
+                        length: "At least 12 characters",
+                        lowercase: "Contains lowercase letters",
+                        uppercase: "Contains uppercase letters",
+                        number: "Contains numbers",
+                        special: "Contains special characters"
+                    }[key];
+                }
+            }
+
+            const fill = document.getElementById("strengthFill");
+            const strengthText = document.getElementById("strengthText");
+            const suggestion = document.getElementById("suggestionText");
+
+            if (password.length === 0) {
+                fill.style.width = "0%";
+                strengthText.textContent = "Enter a password to begin";
+                suggestion.textContent =
+                    "Enter your password to receive suggestions.";
+                return;
+            }
+
+            let strength = "";
+            let color = "";
+
+            if (score <= 2) {
+                strength = "Weak";
+                color = "#ef4444";
+            } else if (score <= 3) {
+                strength = "Medium";
+                color = "#f59e0b";
+            } else if (score === 4) {
+                strength = "Strong";
+                color = "#22c55e";
+            } else {
+                strength = "Very Strong";
+                color = "#15803d";
+            }
+
+            fill.style.width = (score / 5 * 100) + "%";
+            fill.style.backgroundColor = color;
+            strengthText.textContent = strength;
+            strengthText.style.color = color;
+
+            const tips = [];
+
+            if (password.length < 12) {
+                tips.push("Use at least 12 characters.");
+            }
+
+            if (!checks.lowercase) {
+                tips.push("Add lowercase letters.");
+            }
+
+            if (!checks.uppercase) {
+                tips.push("Add uppercase letters.");
+            }
+
+            if (!checks.number) {
+                tips.push("Include numbers.");
+            }
+
+            if (!checks.special) {
+                tips.push("Include special characters.");
+            }
+
+            if (tips.length === 0) {
+                suggestion.textContent =
+                    "Great! Your password meets all five basic checks. " +
+                    "Avoid common words and personal information, and " +
+                    "use a unique password for every account.";
+            } else {
+                suggestion.textContent = tips.join(" ");
+            }
+        }
+    </script>
+
+</body>
+</html>
